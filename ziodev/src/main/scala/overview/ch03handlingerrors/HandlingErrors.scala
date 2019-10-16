@@ -2,10 +2,9 @@ package overview.ch03handlingerrors
 
 import java.io.{FileNotFoundException, IOException}
 
-import zio.{DefaultRuntime, IO, Schedule, Task, UIO, ZIO}
+import zio.{DefaultRuntime, IO, Schedule, UIO, ZIO}
 
 import scala.util.chaining._
-import scala.io.StdIn
 import java.nio.file.Files
 import java.nio.file.Paths
 import scala.util.Try

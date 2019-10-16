@@ -1,12 +1,6 @@
 package overview.ch04handlingresources
 
-import java.io._
-
 import zio.{DefaultRuntime, IO, UIO}
-
-import java.nio.file.Files
-import java.nio.file.Paths
-import scala.util.Try
 
 import util._
 

@@ -2,14 +2,13 @@ package overview.ch04handlingresources
 
 import java.io._
 
-import zio.{DefaultRuntime, IO, Task, UIO, ZIO}
+import zio.{DefaultRuntime, IO, UIO, ZIO}
 
 import java.nio.file.Files
 import java.nio.file.Paths
 
 import scala.util.Try
 import scala.util.chaining._
-import scala.collection.compat._
 
 import util._
 import util.collections._
