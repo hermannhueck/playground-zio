@@ -1,4 +1,6 @@
-package object util {
+package util
+
+package object formatting {
 
   import build._
 
