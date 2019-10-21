@@ -2,8 +2,6 @@ package overview
 
 package object ch04handlingresources {
 
-  import java.io.BufferedReader
-
   def wordCount(words: Seq[String]): Seq[(String, Int)] =
     words
       .map(w => w -> 1)

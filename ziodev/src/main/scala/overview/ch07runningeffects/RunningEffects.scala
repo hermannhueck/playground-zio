@@ -2,7 +2,7 @@ package overview.ch07runningeffects
 
 import zio.{DefaultRuntime, Runtime, UIO, ZIO}
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]

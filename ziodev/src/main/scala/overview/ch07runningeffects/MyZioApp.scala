@@ -5,7 +5,7 @@ import java.io.IOException
 import zio.ZIO
 import zio.console._
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]

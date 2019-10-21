@@ -10,8 +10,8 @@ import java.nio.file.Paths
 import scala.util.Try
 import scala.util.chaining._
 
-import util._
-import util.collections._
+import util.formatting._
+import compat213.collections.unfold._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]
@@ -53,7 +53,7 @@ object HandlingResources2 extends App {
     UIO(reader.close())
 
   def readLines(br: java.io.BufferedReader): Seq[String] =
-    Iterator.unfold(())(_ => Option(br.readLine()).map(_ -> ())).toSeq
+    Iterator.unfold(())(_ => Option(br.readLine()).map(x => (x, ()))).toSeq
 
   def toWords(line: String): List[String] =
     line.split("\\W").toList.filter(_.length > 1)

@@ -5,7 +5,7 @@ import scala.util.chaining._
 import zio.clock.Clock
 import zio.{DefaultRuntime, Exit, Fiber, IO, UIO, ZIO}
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]

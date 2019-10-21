@@ -9,7 +9,7 @@ import scala.util.chaining._
 import scala.io.{Codec, Source, StdIn}
 import scala.util.Try
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]

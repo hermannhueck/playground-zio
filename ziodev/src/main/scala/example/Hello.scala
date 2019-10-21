@@ -1,6 +1,6 @@
 package example
 
-import util._
+import util.formatting._
 
 object Hello extends Greeting with App {
 

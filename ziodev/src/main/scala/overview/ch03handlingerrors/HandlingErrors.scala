@@ -9,7 +9,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import scala.util.Try
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]

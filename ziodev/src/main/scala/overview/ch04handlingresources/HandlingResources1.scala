@@ -2,7 +2,7 @@ package overview.ch04handlingresources
 
 import zio.{DefaultRuntime, IO, UIO}
 
-import util._
+import util.formatting._
 
 /*
   type UIO[+A]       = ZIO[Any, Nothing, A]
