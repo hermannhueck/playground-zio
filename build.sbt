@@ -6,10 +6,16 @@ val scala212               = "2.12.10"
 val scala213               = "2.13.1"
 val supportedScalaVersions = List(scala212, scala213)
 
-val zio              = "dev.zio"                %% "zio"                     % "1.0.0-RC15"
+val catsVersion = "2.0.0"
+val zioVersion  = "1.0.0-RC15"
+
+val catsCore         = "org.typelevel"          %% "cats-core"               % catsVersion
+val zio              = "dev.zio"                %% "zio"                     % zioVersion
+val zioStreams       = "dev.zio"                %% "zio-streams"             % zioVersion
 val scalaTest        = "org.scalatest"          %% "scalatest"               % "3.0.8"
 val scalaCheck       = "org.scalacheck"         %% "scalacheck"              % "1.14.2"
 val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2"
+val commonsIO        = "commons-io"             % "commons-io"               % "2.6"
 
 inThisBuild(
   Seq(
@@ -27,6 +33,22 @@ inThisBuild(
       "-explaintypes", // explain type errors in more detail
       "-Xcheckinit"    // wrap field accessors to throw an exception on uninitialized access
     ),
+    scalacOptions ++= {
+      println(s"\n>>>>>          compiling for Scala ${(scalaVersion).value}\n")
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, minor)) if minor >= 13 =>
+          Seq(
+            "-Xlint:-unused,_" // suppress unused warnings in 2.13
+            // "-Xlint"
+          )
+        case _ =>
+          Seq(
+            "-Ypartial-unification", // (removed in scala 2.13) allow the compiler to unify type constructors of different arities
+            "-language:higherKinds", // (not required since scala 2.13.1) suppress warnings when using higher kinded types
+            "-Xlint"                 // enable handy linter warnings
+          )
+      }
+    },
     libraryDependencies ++= Seq(
       collectionCompat,
       scalaTest  % Test,
@@ -48,22 +70,7 @@ lazy val root = (project in file("."))
     buildInfoPackage := "build",
     name := projectName,
     description := projectDescription,
-    crossScalaVersions := Seq.empty,
-    scalacOptions ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, minor)) if minor >= 13 =>
-          Seq(
-            "-Xlint:-unused,_" // suppress unused warnings in 2.13
-            // "-Xlint"
-          )
-        case _ =>
-          Seq(
-            "-Ypartial-unification", // (removed in scala 2.13) allow the compiler to unify type constructors of different arities
-            "-language:higherKinds", // (not required since scala 2.13.1) suppress warnings when using higher kinded types
-            "-Xlint"                 // enable handy linter warnings
-          )
-      }
-    }
+    crossScalaVersions := Seq.empty
   )
 
 lazy val ziodev = (project in file("ziodev"))
@@ -72,7 +79,10 @@ lazy val ziodev = (project in file("ziodev"))
     name := "ziodev",
     description := "Code samples from the zio website https://zio.dev",
     libraryDependencies ++= Seq(
-      zio
+      zio,
+      zioStreams,
+      catsCore,
+      commonsIO
     )
   )
 
