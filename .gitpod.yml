@@ -3,4 +3,5 @@ vscode:
     - scala-lang.scala@0.3.8:wQBBM+lKILHBqOqlqW60xA==
     - scalameta.metals@1.6.0:Yi5jjDJjIyozrOuZIWFt/g==
 tasks:
-  - command: source ./setup_bloop.sh
+  - init: source ./.setup-worspace.sh
+    command: /home/gitpod/sbt/bin/sbt test
