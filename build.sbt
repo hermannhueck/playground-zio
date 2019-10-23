@@ -9,13 +9,12 @@ val supportedScalaVersions = List(scala212, scala213)
 val catsVersion = "2.0.0"
 val zioVersion  = "1.0.0-RC15"
 
-val catsCore         = "org.typelevel"          %% "cats-core"               % catsVersion
-val zio              = "dev.zio"                %% "zio"                     % zioVersion
-val zioStreams       = "dev.zio"                %% "zio-streams"             % zioVersion
-val scalaTest        = "org.scalatest"          %% "scalatest"               % "3.0.8"
-val scalaCheck       = "org.scalacheck"         %% "scalacheck"              % "1.14.2"
-val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2"
-val commonsIO        = "commons-io"             % "commons-io"               % "2.6"
+val catsCore   = "org.typelevel"  %% "cats-core"   % catsVersion
+val zio        = "dev.zio"        %% "zio"         % zioVersion
+val zioStreams = "dev.zio"        %% "zio-streams" % zioVersion
+val scalaTest  = "org.scalatest"  %% "scalatest"   % "3.0.8"
+val scalaCheck = "org.scalacheck" %% "scalacheck"  % "1.14.2"
+val commonsIO  = "commons-io"     % "commons-io"   % "2.6"
 
 val scalacOptionsForAllVersions = Seq(
   "-encoding",
@@ -42,7 +41,7 @@ lazy val scalacOptions212 = scalacOptionsForAllVersions ++
   )
 
 def scalacOptionsFor(scalaVersion: String): Seq[String] = {
-  println(s"\n>>>>>          compiling for Scala $scalaVersion\n")
+  // println(s"\n>>>>>          compiling for Scala $scalaVersion\n")
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, minor)) if minor >= 13 =>
       scalacOptions213
@@ -58,7 +57,6 @@ inThisBuild(
     crossScalaVersions := supportedScalaVersions,
     publish / skip := true,
     libraryDependencies ++= Seq(
-      collectionCompat,
       scalaTest  % Test,
       scalaCheck % Test
     ),
