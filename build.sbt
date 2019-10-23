@@ -48,8 +48,11 @@ lazy val ziodev = (project in file("ziodev"))
       zio,
       zioStreams,
       catsCore,
-      commonsIO
-    )
+      commonsIO,
+      zioTest    % Test,
+      zioTestSbt % Test
+    ),
+    testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
 
 lazy val compat213 = (project in file("compat213"))
