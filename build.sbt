@@ -19,12 +19,13 @@ inThisBuild(
       scalaTest  % Test,
       scalaCheck % Test
     ),
-    initialCommands := s"""
-      import scala.util.chaining._
-      import zio._
-      import zio.blocking._
-      println
-      """.stripMargin // initialize REPL
+    initialCommands :=
+      s"""|
+          |import scala.util.chaining._
+          |import zio._
+          |import zio.blocking._
+          |println
+          |""".stripMargin // initialize REPL
   )
 )
 
