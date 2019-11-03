@@ -32,8 +32,6 @@ inThisBuild(
 lazy val root = (project in file("."))
   .aggregate(ziodev)
   .settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "build",
     name := projectName,
     description := projectDescription,
     crossScalaVersions := Seq.empty
@@ -50,6 +48,21 @@ lazy val ziodev = (project in file("ziodev"))
       zioStreams,
       catsCore,
       commonsIO,
+      zioTest    % Test,
+      zioTestSbt % Test
+    ),
+    testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
+  )
+
+lazy val zioworkshop = (project in file("zioworkshop"))
+  .dependsOn(compat213, util)
+  .settings(
+    name := "zioworkshop",
+    description := "Workshop exercises/solutions from https://github.com/jdegoes/zio-intro-game",
+    scalacOptions ++= scalacOptionsFor(scalaVersion.value),
+    libraryDependencies ++= Seq(
+      zio,
+      zioStreams,
       zioTest    % Test,
       zioTestSbt % Test
     ),
