@@ -12,7 +12,7 @@ import zio.console._
 import cats.implicits._
 
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppStream extends scala.App {
 
@@ -59,18 +59,18 @@ object AppStream extends scala.App {
   // ------------------------------------------------------------
   prtSubTitle("Working on several streams")
 
-  "--- Stream#merge:" |> println
+  "--- Stream#merge:" pipe println
 
   val merged: Stream[Nothing, Int]            = Stream(1, 2, 3).merge(Stream(11, 12, 13))
   val resMerged: ZIO[Any, Nothing, List[Int]] = merged.run(Sink.collectAll[Int])
-  (runtime unsafeRun resMerged) |> println
+  (runtime unsafeRun resMerged) pipe println
 
-  "--- Stream#zip:" |> println
+  "--- Stream#zip:" pipe println
 
   val zipped: Stream[Nothing, (Int, Int)]            = Stream(1, 2, 3).zip(Stream(11, 12, 13))
   val resZipped: ZIO[Any, Nothing, List[(Int, Int)]] = zipped.run(Sink.collectAll[(Int, Int)])
 
-  (runtime unsafeRun resZipped) |> println
+  (runtime unsafeRun resZipped) pipe println
 
   def tupleStreamReduce(total: Int, element: (Int, Int)) = {
     val (a, b) = element
@@ -79,17 +79,17 @@ object AppStream extends scala.App {
 
   val reducedResult: UIO[Int] = zipped.run(Sink.foldLeft(0)(tupleStreamReduce))
 
-  (runtime unsafeRun reducedResult) |> (reduced => println(s"tuples reduced: $reduced"))
+  (runtime unsafeRun reducedResult) pipe (reduced => println(s"tuples reduced: $reduced"))
 
-  "--- Stream#zipWith:" |> println
+  "--- Stream#zipWith:" pipe println
 
   val zippedWith: Stream[Nothing, Int] =
     Stream(1, 2, 3)
       .zipWith(Stream(11, 12, 13)) { case (opt1, opt2) => opt1 -> opt2 mapN (_ + _) }
   val resZippedWith: ZIO[Any, Nothing, List[Int]] = zippedWith.run(Sink.collectAll[Int])
-  (runtime unsafeRun resZippedWith) |> println
+  (runtime unsafeRun resZippedWith) pipe println
 
-  "--- Stream#zipWithIndex:" |> println
+  "--- Stream#zipWithIndex:" pipe println
 
   val zippedWithIndex: Stream[Nothing, String] =
     Stream(10, 11, 12)

@@ -7,7 +7,7 @@ package datatypes
 
 import zio._
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppRef extends scala.App {
 
@@ -25,7 +25,7 @@ object AppRef extends scala.App {
     v3  <- ref.get
   } yield v3
 
-  runtime.unsafeRun(zio1) |> println
+  runtime.unsafeRun(zio1) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Updating a Ref: Ref#update")
@@ -47,7 +47,7 @@ object AppRef extends scala.App {
   // ------------------------------------------------------------
   prtSubTitle("State Transformers: Ref#modify")
 
-  "--- classic state mutation without ZIO ---" |> println
+  "--- classic state mutation without ZIO ---" pipe println
   var idCounter = 0
 
   def freshVar: String = {
@@ -58,9 +58,9 @@ object AppRef extends scala.App {
   val v1 = freshVar
   val v2 = freshVar
   val v3 = freshVar
-  v3 |> println
+  v3 pipe println
 
-  "--- functional mutation with ZIO's Ref ---" |> println
+  "--- functional mutation with ZIO's Ref ---" pipe println
 
   val uioFinalId = Ref.make(0).flatMap { idCounter =>
     def freshVar: UIO[String] =
@@ -73,7 +73,7 @@ object AppRef extends scala.App {
     } yield v3
   }
 
-  (runtime unsafeRun uioFinalId) |> println
+  (runtime unsafeRun uioFinalId) pipe println
 
   prtLine()
 }

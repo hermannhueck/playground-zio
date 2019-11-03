@@ -7,7 +7,7 @@ package datatypes
 
 import zio._
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppFiberRef extends scala.App {
 
@@ -26,7 +26,7 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(uio1)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
   // ------------------------------------------------------------
   prtSubTitle(
@@ -41,12 +41,12 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(uio2)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Propagation")
 
-  "--- FiberRef[A] has copy-on-fork semantics for ZIO#fork. ---" |> println
+  "--- FiberRef[A] has copy-on-fork semantics for ZIO#fork. ---" pipe println
 
   val uio3 = for {
     fiberRef <- FiberRef.make[Int](0)
@@ -57,9 +57,9 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(uio3)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
-  "--- Fiber#inheritFiberRefs ---" |> println
+  "--- Fiber#inheritFiberRefs ---" pipe println
 
   val uio4 = for {
     fiberRef <- FiberRef.make[Int](0)
@@ -72,9 +72,9 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(uio4)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
-  "--- same semantics with and without join ---" |> println
+  "--- same semantics with and without join ---" pipe println
 
   val withJoin =
     for {
@@ -86,7 +86,7 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(withJoin)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
   val withoutJoin =
     for {
@@ -97,9 +97,9 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(withoutJoin)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
-  "--- customized merge of 2 FiberRef values ---" |> println
+  "--- customized merge of 2 FiberRef values ---" pipe println
 
   val uioMax = for {
     fiberRef <- FiberRef.make(0, math.max)
@@ -111,12 +111,12 @@ object AppFiberRef extends scala.App {
 
   runtime
     .unsafeRun(uioMax)
-    .ensuring { _ == true } |> println
+    .ensuring { _ == true } pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Memory Safety")
 
-  "The value of a FiberRef is automatically garbage collected once the Fiber owning it is finished." |> println
+  "The value of a FiberRef is automatically garbage collected once the Fiber owning it is finished." pipe println
 
   prtLine()
 }

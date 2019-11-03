@@ -12,7 +12,7 @@ import zio.console._
 import zio.duration.Duration
 
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppSemaphore extends scala.App {
 
@@ -47,7 +47,7 @@ object AppSemaphore extends scala.App {
 
   runtime unsafeRun program
 
-  "--- Semaphore#acquireN, Semaphore#releaseN ---" |> println
+  "--- Semaphore#acquireN, Semaphore#releaseN ---" pipe println
 
   val semTaskN = (sem: Semaphore) =>
     for {
@@ -56,7 +56,7 @@ object AppSemaphore extends scala.App {
       _ <- sem.releaseN(5)
     } yield ()
 
-  "--- Semaphore#withPermit, Semaphore#withPermits ---" |> println
+  "--- Semaphore#withPermit, Semaphore#withPermits ---" pipe println
 
   val permitTask = (sem: Semaphore) =>
     for {

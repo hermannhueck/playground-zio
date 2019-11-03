@@ -4,7 +4,7 @@ import java.io.{BufferedReader, IOException}
 
 import zio._
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppManaged extends scala.App {
 
@@ -29,7 +29,7 @@ object AppManaged extends scala.App {
   // ------------------------------------------------------------
   prtSubTitle("Creating a Managed: Managed.fromEffect")
 
-  "--- from Effect ---" |> println
+  "--- from Effect ---" pipe println
 
   def acquire: IO[String, Int] =
     IO.effect {
@@ -42,7 +42,7 @@ object AppManaged extends scala.App {
 
   runtime unsafeRun managedFromEffect.use(_ => IO.effect(println("Using the Int resource ...")))
 
-  "--- from pure value ---" |> println
+  "--- from pure value ---" pipe println
 
   val managedFromValue: Managed[Nothing, Int] = Managed.succeed(3)
 

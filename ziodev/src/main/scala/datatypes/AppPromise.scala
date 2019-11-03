@@ -8,7 +8,7 @@ package datatypes
 import java.util.concurrent.TimeUnit
 
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 import zio.duration.Duration
 import zio._
 import zio.clock.Clock
@@ -35,7 +35,7 @@ object AppPromise extends scala.App {
     value <- p.await
   } yield value
 
-  runtime.unsafeRun(race) |> println
+  runtime.unsafeRun(race) pipe println
 
   val ioPromise1: UIO[Promise[Exception, String]] =
     Promise.make[Exception, String]
@@ -43,7 +43,7 @@ object AppPromise extends scala.App {
   val ioBooleanSucceeded: UIO[Boolean] =
     ioPromise1.flatMap(promise => promise.succeed("I'm done"))
 
-  (runtime unsafeRun ioBooleanSucceeded) |> println
+  (runtime unsafeRun ioBooleanSucceeded) pipe println
 
   val ioPromise2: UIO[Promise[Exception, Nothing]] =
     Promise.make[Exception, Nothing]
@@ -51,7 +51,7 @@ object AppPromise extends scala.App {
   val ioBooleanFailed: UIO[Boolean] =
     ioPromise2.flatMap(promise => promise.fail(new Exception("boom")))
 
-  (runtime unsafeRun ioBooleanFailed) |> println
+  (runtime unsafeRun ioBooleanFailed) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Awaiting")
@@ -69,7 +69,7 @@ object AppPromise extends scala.App {
     result <- p.await
   } yield result
 
-  (runtime unsafeRun awaitedValue) |> println
+  (runtime unsafeRun awaitedValue) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Polling")
@@ -93,7 +93,7 @@ object AppPromise extends scala.App {
     result <- ioIsItDone race ioIsItDone2
   } yield result
 
-  // (runtime unsafeRun polledValue) |> println
+  // (runtime unsafeRun polledValue) pipe println
 
   prtLine()
 }

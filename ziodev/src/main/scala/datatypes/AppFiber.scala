@@ -7,7 +7,7 @@ package datatypes
 
 import zio._
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 
 object AppFiber extends scala.App {
 
@@ -18,7 +18,7 @@ object AppFiber extends scala.App {
 
   val runtime = new DefaultRuntime {}
 
-  "--- computing Analysis ---" |> println
+  "--- computing Analysis ---" pipe println
 
   trait Analysis {
     override def toString: String = "Analysis"
@@ -44,9 +44,9 @@ object AppFiber extends scala.App {
     } yield analyzed
 
   val analysis: Analysis = runtime unsafeRun analyzed
-  analysis |> println
+  analysis pipe println
 
-  "--- Fibonacci ---" |> println
+  "--- Fibonacci ---" pipe println
 
   def fib(n: Int): UIO[Int] =
     if (n <= 1) {
@@ -61,7 +61,7 @@ object AppFiber extends scala.App {
     }
 
   (0 until 20) foreach { i =>
-    s"fib($i) = ${runtime unsafeRun fib(i)}" |> println
+    s"fib($i) = ${runtime unsafeRun fib(i)}" pipe println
   }
 
   // ------------------------------------------------------------
@@ -87,12 +87,12 @@ object AppFiber extends scala.App {
 
   val bigCompute123: UIO[Matrix] =
     bigCompute(List(List(1)), List(List(2)), List(List(3)))
-  (runtime unsafeRun bigCompute123) |> println
+  (runtime unsafeRun bigCompute123) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Racing: Fiber#race, Fiber#raceWith")
 
-  (runtime unsafeRun (fib(20) race fib(10))) |> println
+  (runtime unsafeRun (fib(20) race fib(10))) pipe println
 
   prtLine()
 }

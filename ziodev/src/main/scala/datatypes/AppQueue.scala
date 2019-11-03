@@ -6,7 +6,7 @@
 package datatypes
 
 import util.formatting._
-import util.syntax.pipe._
+import scala.util.chaining._
 import zio._
 import zio.clock._
 import zio.duration._
@@ -27,7 +27,7 @@ object AppQueue extends scala.App {
     v1    <- queue.take
   } yield v1
 
-  (runtime unsafeRun res) |> println
+  (runtime unsafeRun res) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Creating a Queue: .bounded, .dropping, .sliding, .unbounded")
@@ -52,7 +52,7 @@ object AppQueue extends scala.App {
     _     <- queue.offer(1)
   } yield ()
 
-  (runtime unsafeRun res1) |> println
+  (runtime unsafeRun res1) pipe println
 
   val res2: UIO[Unit] = for {
     queue <- Queue.bounded[Int](1)
@@ -62,7 +62,7 @@ object AppQueue extends scala.App {
     _     <- f.join
   } yield ()
 
-  (runtime unsafeRun res2) |> println
+  (runtime unsafeRun res2) pipe println
 
   val res3: UIO[Unit] = for {
     queue <- Queue.bounded[Int](100)
@@ -70,7 +70,7 @@ object AppQueue extends scala.App {
     _     <- queue.offerAll(items)
   } yield ()
 
-  (runtime unsafeRun res3) |> println
+  (runtime unsafeRun res3) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Consuming Items from a Queue: #take, #poll, #takeUpTo, takeAll")
@@ -82,7 +82,7 @@ object AppQueue extends scala.App {
     v     <- f.join
   } yield v
 
-  (runtime unsafeRun oldestItem) |> println
+  (runtime unsafeRun oldestItem) pipe println
 
   val polled: UIO[Option[Int]] = for {
     queue <- Queue.bounded[Int](100)
@@ -91,7 +91,7 @@ object AppQueue extends scala.App {
     head  <- queue.poll
   } yield head
 
-  (runtime unsafeRun polled) |> println
+  (runtime unsafeRun polled) pipe println
 
   val taken: UIO[List[Int]] = for {
     queue <- Queue.bounded[Int](100)
@@ -100,7 +100,7 @@ object AppQueue extends scala.App {
     list  <- queue.takeUpTo(5)
   } yield list
 
-  (runtime unsafeRun taken) |> println
+  (runtime unsafeRun taken) pipe println
 
   val all: UIO[List[Int]] = for {
     queue <- Queue.bounded[Int](100)
@@ -109,7 +109,7 @@ object AppQueue extends scala.App {
     list  <- queue.takeAll
   } yield list
 
-  (runtime unsafeRun all) |> println
+  (runtime unsafeRun all) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Shutting Down a Queue: #shutdown, #awaitShutdown")
@@ -122,7 +122,7 @@ object AppQueue extends scala.App {
   } yield ()
 
   // produces an error
-  // (runtime unsafeRun takeFromShutdownQueue) |> println
+  // (runtime unsafeRun takeFromShutdownQueue) pipe println
 
   val awaitShutdown: UIO[Unit] = for {
     queue <- Queue.bounded[Int](3)
@@ -132,7 +132,7 @@ object AppQueue extends scala.App {
     _     <- f.join
   } yield ()
 
-  (runtime unsafeRun awaitShutdown) |> println
+  (runtime unsafeRun awaitShutdown) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("Transforming Queues")
@@ -148,7 +148,7 @@ object AppQueue extends scala.App {
       s      <- mapped.take
     } yield s
 
-  (runtime unsafeRun mapped) |> println
+  (runtime unsafeRun mapped) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("ZQueue#mapM")
@@ -173,7 +173,7 @@ object AppQueue extends scala.App {
       tuple <- mapped.take
     } yield tuple
 
-  (runtime unsafeRun annotatedOut) |> println
+  (runtime unsafeRun annotatedOut) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("ZQueue#contramapM")
@@ -196,7 +196,7 @@ object AppQueue extends scala.App {
       tuple <- mapped.take
     } yield tuple
 
-  (runtime unsafeRun annotatedIn) |> println
+  (runtime unsafeRun annotatedIn) pipe println
 
   val timeQueued_orig: UIO[ZQueue[Clock, Nothing, Clock, Nothing, String, (Duration, String)]] =
     for {
@@ -226,7 +226,7 @@ object AppQueue extends scala.App {
       tuple <- durations.take
     } yield tuple
 
-  (runtime unsafeRun timeQueued) |> println
+  (runtime unsafeRun timeQueued) pipe println
 
   // ------------------------------------------------------------
   prtSubTitle("ZQueue#bothWith")
@@ -242,7 +242,7 @@ object AppQueue extends scala.App {
       (i, s)   = iAndS
     } yield (i, s)
 
-  (runtime unsafeRun fromComposedQueues) |> println
+  (runtime unsafeRun fromComposedQueues) pipe println
 
   prtLine()
 }
