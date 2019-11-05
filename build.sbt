@@ -46,6 +46,7 @@ lazy val ziodev = (project in file("ziodev"))
     libraryDependencies ++= Seq(
       zio,
       zioStreams,
+      zioMacrosCore,
       catsCore,
       commonsIO,
       zioTest    % Test,
