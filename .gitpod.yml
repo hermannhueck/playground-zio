@@ -4,4 +4,4 @@ vscode:
     - scalameta.metals@1.6.0:Yi5jjDJjIyozrOuZIWFt/g==
 tasks:
   - init: source ./.setup-worspace.sh
-    command: /home/gitpod/sbt/bin/sbt test
+    command: /home/gitpod/sbt/bin/sbt test:compile
