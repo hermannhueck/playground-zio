@@ -10,6 +10,13 @@ package object formatting {
   val buildInfoColored = s"${Console.BLUE}$buildInfo${Console.RESET}"
   val buildInfoLong    = BuildInfo.toString
 
+  def javaRuntimeInfo = {
+    val javaVendor  = System.getProperty("java.vendor")
+    val javaVersion = System.getProperty("java.version")
+    s"Java Runtime: $javaVendor, $javaVersion"
+  }
+  def javaRuntimeInfoColored = s"${Console.BLUE}$javaRuntimeInfo${Console.RESET}"
+
   def prtTitle(
       text: String,
       width: Int = 80,
@@ -27,7 +34,8 @@ package object formatting {
       fill: String = "\u2500"
   ): String = {
     val textColored = s"${Console.BLUE}$text${Console.RESET}"
-    s"${line(width, leading, "", fill)}${subTitle(textColored, width, "\n", s"", fill)}" +
+    s"${subTitle(textColored, width, "", s"", fill)}" +
+      s"${subTitle(s"$javaRuntimeInfoColored", width, "\n", s"$trailing", fill)}" +
       s"${subTitle(s"$buildInfoColored", width, "\n", s"$trailing\n", fill)}"
   }
 
