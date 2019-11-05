@@ -51,7 +51,14 @@ lazy val ziodev = (project in file("ziodev"))
       commonsIO,
       zioTest    % Test,
       zioTestSbt % Test
-    ),
+    ) ++ {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, minor)) if minor >= 13 => Seq.empty
+        // Macro paradise not needed in 2.13. Just use scalacOption -Ymacro-annotations. See project/ScalacOptions.scala
+        case _ =>
+          Seq(compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full))
+      }
+    },
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
 

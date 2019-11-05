@@ -42,10 +42,10 @@ object TestEffectsSpec
         ),
         suite("Suite: Using Test Environment")(
           testM("`acquire` doesn't leak permits upon cancellation") {
+            /*
             import zio.test.environment.TestClock
             import zio.duration._
             import zio.test.TestAspect.timeout
-            /*
             for {
               testClock <- TestClock.makeTest(TestClock.DefaultData)
               s         <- zio.Semaphore.make(1L)
@@ -137,7 +137,6 @@ object TestEffectsSpec
             import zio.test.environment.TestClock
             import zio.duration._
             import zio.stream._
-            import java.util.concurrent.TimeUnit
 
             val s1 = Stream.iterate(0)(_ + 1).fixed(100.millis)
             val s2 = Stream.iterate(0)(_ + 1).fixed(70.millis)
@@ -193,7 +192,7 @@ object TestEffectsSpec
         ),
         suite("Test Aspects") {
 
-          import zio.duration._
+          // import zio.duration._
           import zio.test.Assertion._
           import zio.test.TestAspect._
           import zio.test._

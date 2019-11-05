@@ -15,7 +15,8 @@ object ScalacOptions {
 
   lazy val scalacOptions213 = scalacOptionsForAllVersions ++
     Seq(
-      "-Xlint:-unused,_" // suppress unused warnings in 2.13
+      "-Ymacro-annotations", // enable macro annotations
+      "-Xlint:-unused,_"     // suppress unused warnings in 2.13
       // "-Xlint"
     )
 
