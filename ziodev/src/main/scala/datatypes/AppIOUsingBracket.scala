@@ -33,12 +33,12 @@ object AppIOUsingBracket extends App {
 
   // mybracket is just a value. Won't execute anything here until interpreted
   val mybracket: Task[Unit] = for {
-    _    <- Task.effect(prtTitleObjectName(this))
+    _ <- Task.effect(printHeaderWithProgramName(this))
     file <- Task(new File("README.md"))
-    len  = file.length
+    len = file.length
     string <- Task(new FileInputStream(file))
-               .bracket(closeStream)(convertBytes(_, len))
+      .bracket(closeStream)(convertBytes(_, len))
     _ <- Task.effect(println(string))
-    _ <- Task.effect(prtLine())
+    _ <- Task.effect(printLine())
   } yield ()
 }

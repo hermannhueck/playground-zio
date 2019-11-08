@@ -14,23 +14,23 @@ import util.formatting._
 object RunningEffects extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   def putStrLn(line: String): UIO[Unit] = ZIO.effectTotal(println(line))
 
   // ------------------------------------------------------------
-  prtSubTitle("DefaultRuntime")
+  printTextInLine("DefaultRuntime")
 
   val runtime = new DefaultRuntime {}
   runtime.unsafeRun(putStrLn("Hello World!"))
 
   // ------------------------------------------------------------
-  prtSubTitle("Custom Runtime")
+  printTextInLine("Custom Runtime")
 
   import zio.internal.PlatformLive
 
   val myRuntime: Runtime[Int] = Runtime(42, PlatformLive.Default)
   myRuntime.unsafeRun(putStrLn("Hello World!"))
 
-  prtLine()
+  printLine()
 }

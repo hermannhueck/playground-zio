@@ -15,23 +15,23 @@ import zio.clock.Clock
 
 object AppPromise extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   // ------------------------------------------------------------
-  prtSubTitle("Promise")
+  printTextInLine("Promise")
 
   val runtime = new DefaultRuntime {}
 
   val race: IO[String, Int] = for {
-    p     <- Promise.make[String, Int]
-    _     <- p.succeed(1).fork
-    _     <- p.complete(ZIO.succeed(2)).fork
-    _     <- p.completeWith(ZIO.succeed(3)).fork
-    _     <- p.done(Exit.succeed(4)).fork
-    _     <- p.fail("5")
-    _     <- p.halt(Cause.die(new Error("6")))
-    _     <- p.die(new Error("7"))
-    _     <- p.interrupt.fork
+    p <- Promise.make[String, Int]
+    _ <- p.succeed(1).fork
+    _ <- p.complete(ZIO.succeed(2)).fork
+    _ <- p.completeWith(ZIO.succeed(3)).fork
+    _ <- p.done(Exit.succeed(4)).fork
+    _ <- p.fail("5")
+    _ <- p.halt(Cause.die(new Error("6")))
+    _ <- p.die(new Error("7"))
+    _ <- p.interrupt.fork
     value <- p.await
   } yield value
 
@@ -54,7 +54,7 @@ object AppPromise extends scala.App {
   (runtime unsafeRun ioBooleanFailed) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Awaiting")
+  printTextInLine("Awaiting")
 
   val ioPromise3: UIO[Promise[Exception, String]] =
     Promise.make[Exception, String]
@@ -64,21 +64,23 @@ object AppPromise extends scala.App {
   //  ioPromise3.complete(IO.succeed("hello"))
 
   val awaitedValue: ZIO[Any with Clock, Exception, String] = for {
-    p      <- ioPromise3
-    _      <- p.succeed("hello").delay(Duration(1L, TimeUnit.SECONDS)).fork
+    p <- ioPromise3
+    _ <- p.succeed("hello").delay(Duration(1L, TimeUnit.SECONDS)).fork
     result <- p.await
   } yield result
 
   (runtime unsafeRun awaitedValue) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Polling")
+  printTextInLine("Polling")
 
   val ioPromise4: UIO[Promise[Exception, String]] =
     Promise.make[Exception, String]
 
-  val ioIsItDone_orig: UIO[Option[IO[Exception, String]]] = ioPromise4.flatMap(p => p.poll)
-  val ioIsItDone2_orig: IO[Unit, IO[Exception, String]]   = ioPromise4.flatMap(p => p.poll.get)
+  val ioIsItDone_orig: UIO[Option[IO[Exception, String]]] =
+    ioPromise4.flatMap(p => p.poll)
+  val ioIsItDone2_orig: IO[Unit, IO[Exception, String]] =
+    ioPromise4.flatMap(p => p.poll.get)
 
   val ioIsItDone: ZIO[Any with Clock, Unit, IO[Exception, String]] =
     ioPromise4.delay(Duration(1L, TimeUnit.SECONDS)).flatMap(p => p.poll.get)
@@ -88,12 +90,12 @@ object AppPromise extends scala.App {
 
   // ???
   val polledValue: ZIO[Any with Clock, Unit, Serializable] = for {
-    p      <- ioPromise4
-    _      <- p.succeed("hello").fork
+    p <- ioPromise4
+    _ <- p.succeed("hello").fork
     result <- ioIsItDone race ioIsItDone2
   } yield result
 
   // (runtime unsafeRun polledValue) pipe println
 
-  prtLine()
+  printLine()
 }

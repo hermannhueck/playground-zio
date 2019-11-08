@@ -14,12 +14,12 @@ import util.formatting._
 object HandlingResources1 extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Finalizing: #ensuring")
+  printTextInLine("Finalizing: #ensuring")
 
   val finalizer =
     UIO.effectTotal(println("Finalizing!"))
@@ -29,5 +29,5 @@ object HandlingResources1 extends App {
   val res1 = runtime.unsafeRun(finalized)
   // println(res1)
 
-  prtLine()
+  printLine()
 }

@@ -4,11 +4,11 @@ import util.formatting._
 
 object Hello extends Greeting with App {
 
-  prtLine()
+  printLine()
 
   println(greeting)
 
-  prtLine()
+  printLine()
 }
 
 trait Greeting {

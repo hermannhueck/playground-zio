@@ -8,10 +8,10 @@ import scala.util.chaining._
 
 object AppManaged extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   // ------------------------------------------------------------
-  prtSubTitle("Managed: Managed.make")
+  printTextInLine("Managed: Managed.make")
 
   val runtime = new DefaultRuntime {}
 
@@ -27,7 +27,7 @@ object AppManaged extends scala.App {
   runtime unsafeRun usedResource
 
   // ------------------------------------------------------------
-  prtSubTitle("Creating a Managed: Managed.fromEffect")
+  printTextInLine("Creating a Managed: Managed.fromEffect")
 
   "--- from Effect ---" pipe println
 
@@ -40,7 +40,8 @@ object AppManaged extends scala.App {
 
   val managedFromEffect: Managed[String, Int] = Managed.fromEffect(acquire)
 
-  runtime unsafeRun managedFromEffect.use(_ => IO.effect(println("Using the Int resource ...")))
+  runtime unsafeRun managedFromEffect.use(_ =>
+    IO.effect(println("Using the Int resource ...")))
 
   "--- from pure value ---" pipe println
 
@@ -51,12 +52,13 @@ object AppManaged extends scala.App {
   }
 
   // ------------------------------------------------------------
-  prtSubTitle("Managed with ZIO environment: ZManaged")
+  printTextInLine("Managed with ZIO environment: ZManaged")
 
   import zio.console._
 
   val zManagedResource: ZManaged[Console, Nothing, Unit] =
-    ZManaged.make(console.putStrLn("acquiring ..."))(_ => console.putStrLn("releasing ..."))
+    ZManaged.make(console.putStrLn("acquiring ..."))(_ =>
+      console.putStrLn("releasing ..."))
 
   val zUsedResource: ZIO[Console, Nothing, Unit] = zManagedResource.use { _ =>
     console.putStrLn("running ...")
@@ -65,7 +67,7 @@ object AppManaged extends scala.App {
   runtime unsafeRun zUsedResource
 
   // ------------------------------------------------------------
-  prtSubTitle("Combining Managed: Managed#flatMap")
+  printTextInLine("Combining Managed: Managed#flatMap")
 
   import overview.ch04handlingresources.HandlingResources2.{closeFile, openFile}
 
@@ -76,7 +78,7 @@ object AppManaged extends scala.App {
     Managed.make(openFile("README.md"))(closeFile)
 
   val combined: Managed[IOException, (Queue[Int], BufferedReader)] = for {
-    queue  <- managedQueue
+    queue <- managedQueue
     reader <- managedFile
   } yield (queue, reader)
 
@@ -84,11 +86,13 @@ object AppManaged extends scala.App {
     case (queue, reader) => doSomething(queue, reader)
   }
 
-  def doSomething(queue: Queue[Int], reader: BufferedReader): IO[IOException, Unit] =
-    IO.effect(println(s"... using the Queue: $queue and BufferedReader: $reader ..."))
+  def doSomething(queue: Queue[Int],
+                  reader: BufferedReader): IO[IOException, Unit] =
+    IO.effect(
+        println(s"... using the Queue: $queue and BufferedReader: $reader ..."))
       .refineToOrDie[IOException]
 
   runtime unsafeRun usedCombinedResource
 
-  prtLine()
+  printLine()
 }

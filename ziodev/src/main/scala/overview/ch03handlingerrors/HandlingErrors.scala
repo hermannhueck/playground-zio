@@ -21,18 +21,18 @@ import util.formatting._
 object HandlingErrors extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Either: #either, #absolve")
+  printTextInLine("Either: #either, #absolve")
 
   // You can surface failures with ZIO#either, which takes an ZIO[R, E, A] and produces an ZIO[R, Nothing, Either[E, A]].
 
-  val failed: IO[String, Int]           = IO.fail("Uh oh!")
+  val failed: IO[String, Int] = IO.fail("Uh oh!")
   val zeither: UIO[Either[String, Int]] = failed.either
-  val res1: Either[String, Int]         = runtime.unsafeRun(zeither) tap println
+  val res1: Either[String, Int] = runtime.unsafeRun(zeither) tap println
 
   def sqrt(io: UIO[Double]): IO[String, Double] =
     ZIO.absolve(
@@ -46,7 +46,7 @@ object HandlingErrors extends App {
   val res2: Double = runtime.unsafeRun(sqrt(UIO.succeed(3.0))) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Catching All Errors: #catchAll")
+  printTextInLine("Catching All Errors: #catchAll")
 
   def openFile(path: String): IO[IOException, Array[Byte]] =
     IO.fromEither {
@@ -62,7 +62,7 @@ object HandlingErrors extends App {
       .catchAll(_ => openFile("backup.json"))
 
   // ------------------------------------------------------------
-  prtSubTitle("Catching Some Errors: #catchSome")
+  printTextInLine("Catching Some Errors: #catchSome")
 
   val data: IO[IOException, Array[Byte]] =
     openFile("primary.data")
@@ -72,14 +72,14 @@ object HandlingErrors extends App {
       }
 
   // ------------------------------------------------------------
-  prtSubTitle("Fallback: #orElse")
+  printTextInLine("Fallback: #orElse")
 
   val primaryOrBackupData: IO[IOException, Array[Byte]] =
     openFile("primary.data")
       .orElse(openFile("backup.data"))
 
   // ------------------------------------------------------------
-  prtSubTitle("Folding: #fold")
+  printTextInLine("Folding: #fold")
 
   lazy val DefaultData: Array[Byte] = Array(0, 0)
 
@@ -87,7 +87,8 @@ object HandlingErrors extends App {
     openFile("primary.data").fold(_ => DefaultData, data => data)
 
   val primaryOrSecondaryData: IO[IOException, Array[Byte]] =
-    openFile("primary.data").foldM(_ => openFile("secondary.data"), data => ZIO.succeed(data))
+    openFile("primary.data")
+      .foldM(_ => openFile("secondary.data"), data => ZIO.succeed(data))
 
   /*
   trait Content
@@ -105,7 +106,7 @@ object HandlingErrors extends App {
    */
 
   // ------------------------------------------------------------
-  prtSubTitle("Retrying: #retry, #retryOrElse, #retryOrElseEither")
+  printTextInLine("Retrying: #retry, #retryOrElse, #retryOrElseEither")
 
   import zio.clock._
 
@@ -118,5 +119,5 @@ object HandlingErrors extends App {
     (_, _) => ZIO.succeed(DefaultData))
    */
 
-  prtLine()
+  printLine()
 }

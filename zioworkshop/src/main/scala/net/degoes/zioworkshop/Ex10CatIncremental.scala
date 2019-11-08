@@ -42,7 +42,7 @@ object Ex10CatIncremental extends App {
         acc: Chunk[Byte]
     ): Chunk[Byte] = {
       // println(s">>>>>>>>>>> Reading (max = ${array.length}) ...")
-      val nRead    = is.read(array)
+      val nRead = is.read(array)
       val newChunk = Chunk.fromArray(array)
       if (nRead < array.length)
         acc ++ newChunk.take(nRead)
@@ -64,21 +64,23 @@ object Ex10CatIncremental extends App {
     contentOf2(file)
       .map(_.map(decode)) // decode Chunk to String
 
-  def contentOf1(file: String): ZIO[Blocking, IOException, Option[Chunk[Byte]]] =
+  def contentOf1(
+      file: String): ZIO[Blocking, IOException, Option[Chunk[Byte]]] =
     FileHandle
       .open(file)
       .bracket(_.close)(_.read)
 
-  def contentOf2(file: String): ZIO[Blocking, IOException, Option[Chunk[Byte]]] =
+  def contentOf2(
+      file: String): ZIO[Blocking, IOException, Option[Chunk[Byte]]] =
     ZManaged
       .make(FileHandle.open(file))(_.close)
       .use(_.read)
 
   def printContent(file: String): ZIO[ZEnv, IOException, Unit] =
     for {
-      _       <- putStrLn(subTitle(file))
+      _ <- putStrLn(textInLine(file))
       content <- contentOf(file)
-      _       <- putStr(content.getOrElse("<empty file>"))
+      _ <- putStr(content.getOrElse("<empty file>"))
     } yield ()
 
   /**
@@ -91,7 +93,7 @@ object Ex10CatIncremental extends App {
   def run(args: List[String]): ZIO[ZEnv, Nothing, Int] = {
 
     val effects: List[ZIO[ZEnv, IOException, Unit]] =
-      (putStrLn(title(objectName(this))) :: (args map { file =>
+      (putStrLn(header(objectName(this))) :: (args map { file =>
         printContent(file)
       })) :+ putStrLn(line())
 

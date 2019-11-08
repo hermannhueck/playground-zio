@@ -16,28 +16,28 @@ import scala.util.chaining._
 
 object AppStream extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Stream")
+  printTextInLine("Stream")
 
   // ------------------------------------------------------------
-  prtSubTitle("Creating a Stream")
+  printTextInLine("Creating a Stream")
 
   val stream: Stream[Nothing, Int] = Stream(1, 2, 3)
 
   val streamFromIterable: Stream[Nothing, Int] = Stream.fromIterable(0 to 100)
 
   // ------------------------------------------------------------
-  prtSubTitle("Transforming a Stream: #map")
+  printTextInLine("Transforming a Stream: #map")
 
-  val intStream: Stream[Nothing, Int]       = Stream.fromIterable(0 to 100)
+  val intStream: Stream[Nothing, Int] = Stream.fromIterable(0 to 100)
   val stringStream: Stream[Nothing, String] = intStream.map(_.toString)
 
   // ------------------------------------------------------------
-  prtSubTitle("Consuming a Stream: #foreach")
+  printTextInLine("Consuming a Stream: #foreach")
 
   val result: RIO[Console, Unit] =
     Stream
@@ -47,7 +47,7 @@ object AppStream extends scala.App {
   runtime unsafeRun result
 
   // ------------------------------------------------------------
-  prtSubTitle("Using a Sink: #run")
+  printTextInLine("Using a Sink: #run")
 
   def streamReduce(total: Int, element: Int): Int = total + element
 
@@ -57,18 +57,20 @@ object AppStream extends scala.App {
   runtime unsafeRun resultFromSink
 
   // ------------------------------------------------------------
-  prtSubTitle("Working on several streams")
+  printTextInLine("Working on several streams")
 
   "--- Stream#merge:" pipe println
 
-  val merged: Stream[Nothing, Int]            = Stream(1, 2, 3).merge(Stream(11, 12, 13))
+  val merged: Stream[Nothing, Int] = Stream(1, 2, 3).merge(Stream(11, 12, 13))
   val resMerged: ZIO[Any, Nothing, List[Int]] = merged.run(Sink.collectAll[Int])
   (runtime unsafeRun resMerged) pipe println
 
   "--- Stream#zip:" pipe println
 
-  val zipped: Stream[Nothing, (Int, Int)]            = Stream(1, 2, 3).zip(Stream(11, 12, 13))
-  val resZipped: ZIO[Any, Nothing, List[(Int, Int)]] = zipped.run(Sink.collectAll[(Int, Int)])
+  val zipped: Stream[Nothing, (Int, Int)] =
+    Stream(1, 2, 3).zip(Stream(11, 12, 13))
+  val resZipped: ZIO[Any, Nothing, List[(Int, Int)]] =
+    zipped.run(Sink.collectAll[(Int, Int)])
 
   (runtime unsafeRun resZipped) pipe println
 
@@ -79,21 +81,24 @@ object AppStream extends scala.App {
 
   val reducedResult: UIO[Int] = zipped.run(Sink.foldLeft(0)(tupleStreamReduce))
 
-  (runtime unsafeRun reducedResult) pipe (reduced => println(s"tuples reduced: $reduced"))
+  (runtime unsafeRun reducedResult) pipe (reduced =>
+    println(s"tuples reduced: $reduced"))
 
   "--- Stream#zipWith:" pipe println
 
   val zippedWith: Stream[Nothing, Int] =
     Stream(1, 2, 3)
-      .zipWith(Stream(11, 12, 13)) { case (opt1, opt2) => opt1 -> opt2 mapN (_ + _) }
-  val resZippedWith: ZIO[Any, Nothing, List[Int]] = zippedWith.run(Sink.collectAll[Int])
+      .zipWith(Stream(11, 12, 13)) {
+        case (opt1, opt2) => opt1 -> opt2 mapN (_ + _)
+      }
+  val resZippedWith: ZIO[Any, Nothing, List[Int]] =
+    zippedWith.run(Sink.collectAll[Int])
   (runtime unsafeRun resZippedWith) pipe println
 
   "--- Stream#zipWithIndex:" pipe println
 
   val zippedWithIndex: Stream[Nothing, String] =
-    Stream(10, 11, 12)
-      .zipWithIndex
+    Stream(10, 11, 12).zipWithIndex
       .map(_.swap)
       .map { case (index, value) => s"index = $index, value = $value" }
 
@@ -102,5 +107,5 @@ object AppStream extends scala.App {
 
   runtime unsafeRun resZippedWithIndex foreach println
 
-  prtLine()
+  printLine()
 }

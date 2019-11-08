@@ -15,27 +15,28 @@ import scala.util.chaining._
 
 object AppIO extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   // ------------------------------------------------------------
-  prtSubTitle("IO")
+  printTextInLine("IO")
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Pure Values")
+  printTextInLine("Pure Values")
 
   val uioString: UIO[String] = IO.succeed("Hello World")
   (runtime unsafeRun uioString) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Infallible IO")
+  printTextInLine("Infallible IO")
 
   // ------------------------------------------------------------
-  prtSubTitle("Unproductive IO")
+  printTextInLine("Unproductive IO")
 
   // ------------------------------------------------------------
-  prtSubTitle("Impure Code: IO.effect, IO.effectTotal, IO#refineOrDie, IO.effectAsync")
+  printTextInLine(
+    "Impure Code: IO.effect, IO.effectTotal, IO#refineOrDie, IO.effectAsync")
 
   val effectTotalTask: Task[Long] = IO.effectTotal(System.nanoTime())
   (runtime unsafeRun effectTotalTask) pipe println
@@ -47,7 +48,8 @@ object AppIO extends scala.App {
       .refineToOrDie[IOException]
 
   def readFile(name: String): ZIO[Any, IOException, String] =
-    IO.effect(FileUtils.readFileToString(new File(name), StandardCharsets.UTF_8))
+    IO.effect(
+        FileUtils.readFileToString(new File(name), StandardCharsets.UTF_8))
       .refineToOrDie[IOException]
 
   (runtime unsafeRun readFile("README.md")) pipe println
@@ -58,7 +60,7 @@ object AppIO extends scala.App {
    */
 
   // ------------------------------------------------------------
-  prtSubTitle("Mapping: IO#map, IO#mapError")
+  printTextInLine("Mapping: IO#map, IO#mapError")
 
   val mappedValue: UIO[Int] =
     IO.succeed(21).map(_ * 2)
@@ -69,7 +71,7 @@ object AppIO extends scala.App {
   // (runtime unsafeRun mappedError) pipe println // throws Exception
 
   // ------------------------------------------------------------
-  prtSubTitle("Chaining: IO#flatMap")
+  printTextInLine("Chaining: IO#flatMap")
 
   val chainedActionsValue: UIO[List[Int]] =
     IO.succeed(List(1, 2, 3)).flatMap { list =>
@@ -78,22 +80,23 @@ object AppIO extends scala.App {
   (runtime unsafeRun chainedActionsValue) pipe println
 
   val chainedActionsValueWithForComprehension: UIO[List[Int]] = for {
-    list  <- IO.succeed(List(1, 2, 3))
+    list <- IO.succeed(List(1, 2, 3))
     added <- IO.succeed(list.map(_ + 1))
   } yield added
   (runtime unsafeRun chainedActionsValueWithForComprehension) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Brackets")
+  printTextInLine("Brackets")
 
   "--- see Example: overview.ch04handlingresources.HandlingResources2 ---" pipe println
 
   "\n--- IO#ensuring" pipe println
 
-  var i: Int                   = 0
-  val action: Task[String]     = Task.effectTotal(i += 1) *> Task.fail(new Throwable("Boom!"))
+  var i: Int = 0
+  val action: Task[String] = Task.effectTotal(i += 1) *> Task.fail(
+    new Throwable("Boom!"))
   val cleanupAction: UIO[Unit] = UIO.effectTotal(i -= 1)
-  val composite                = action.ensuring(cleanupAction)
+  val composite = action.ensuring(cleanupAction)
 
   try {
     runtime unsafeRun composite
@@ -104,5 +107,5 @@ object AppIO extends scala.App {
     s"i = $i" pipe println
   }
 
-  prtLine()
+  printLine()
 }

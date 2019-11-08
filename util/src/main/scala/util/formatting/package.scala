@@ -5,12 +5,12 @@ package object formatting {
   import build._
   import Console._
 
-  val sbtVersion    = BuildInfo.sbtVersion
-  val scalaVersion  = BuildInfo.scalaVersion
-  val buildInfo     = s"BuildInfo: sbt.version = $sbtVersion, scala.version = $scalaVersion"
-  val buildInfoLong = BuildInfo.toString
+  val sbtVersion: String    = BuildInfo.sbtVersion
+  val scalaVersion: String  = BuildInfo.scalaVersion
+  val buildInfo             = s"BuildInfo: sbt.version = $sbtVersion, scala.version = $scalaVersion"
+  val buildInfoLong: String = BuildInfo.toString
 
-  def javaRuntimeInfo = {
+  def javaRuntimeInfo: String = {
     val javaVendor  = System.getProperty("java.vendor")
     val javaVersion = System.getProperty("java.version")
     s"Java Runtime: $javaVendor, $javaVersion"
@@ -105,20 +105,20 @@ package object formatting {
   ): String =
     line(width, "", "", fill)
 
-  def objectNameSimple(scalaObject: java.lang.Object) = {
-    val cn = scalaObject.getClass().getSimpleName()
+  def objectNameSimple(scalaObject: java.lang.Object): String = {
+    val cn = scalaObject.getClass.getSimpleName
     cn.substring(0, cn.length() - 1)
   }
 
-  def objectName(scalaObject: java.lang.Object) = {
-    val cn = scalaObject.getClass().getName
+  def objectName(scalaObject: java.lang.Object): String = {
+    val cn = scalaObject.getClass.getName
     cn.substring(0, cn.length() - 1)
   }
 
-  def printHeaderWithProgramName(scalaObject: java.lang.Object) =
+  def printHeaderWithProgramName(scalaObject: java.lang.Object): Unit =
     printHeader(objectName(scalaObject))
 
-  def printProgramNameInLine(scalaObject: java.lang.Object) =
+  def printProgramNameInLine(scalaObject: java.lang.Object): Unit =
     printTextInLine(objectName(scalaObject))
 
   def printGreen(): Unit   = print(GREEN)

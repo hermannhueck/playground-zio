@@ -21,11 +21,11 @@ object MyZioApp extends zio.App {
 
   val myAppLogic: ZIO[Console, IOException, Unit] =
     for {
-      _    <- putStrLn(title(objectName(this)))
-      _    <- putStrLn(subTitle("Running Effects"))
-      _    <- putStrLn("Hello! What is your name?")
+      _ <- putStrLn(header(objectName(this)))
+      _ <- putStrLn(textInLine("Running Effects"))
+      _ <- putStrLn("Hello! What is your name?")
       name <- getStrLn
-      _    <- putStrLn(s"Hello, ${name}, welcome to ZIO!")
-      _    <- putStrLn(line())
+      _ <- putStrLn(s"Hello, ${name}, welcome to ZIO!")
+      _ <- putStrLn(line())
     } yield ()
 }

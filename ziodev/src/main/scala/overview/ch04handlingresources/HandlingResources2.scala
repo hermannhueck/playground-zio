@@ -22,25 +22,24 @@ import compat213.collections.unfold._
  */
 object HandlingResources2 extends App {
 
-  implicit class EitherOps[+L, +R](private val self: Either[L, R]) extends AnyVal {
+  implicit class EitherOps[+L, +R](private val self: Either[L, R])
+      extends AnyVal {
 
     @inline def mapLeft[L2](f: L => L2): Either[L2, R] =
-      self
-        .swap
+      self.swap
         .map(f)
         .swap
   }
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
-  prtSubTitle("Bracket: #bracket")
+  printTextInLine("Bracket: #bracket")
 
   def bufferedReader(path: String): Either[IOException, BufferedReader] =
-    Try(Files.newBufferedReader(Paths.get(path)))
-      .toEither
+    Try(Files.newBufferedReader(Paths.get(path))).toEither
       .mapLeft {
         case ioe: IOException => ioe
         case t: Throwable     => throw t
@@ -82,5 +81,5 @@ object HandlingResources2 extends App {
     }
    */
 
-  prtLine()
+  printLine()
 }

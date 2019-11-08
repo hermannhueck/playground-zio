@@ -13,12 +13,12 @@ import scala.util.chaining._
 
 object AppSink extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Sink")
+  printTextInLine("Sink")
 
   val stream: Stream[Nothing, Int] = Stream.fromIterable(1 to 100)
 
@@ -29,7 +29,7 @@ object AppSink extends scala.App {
   (runtime unsafeRun zio) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Creating Sinks")
+  printTextInLine("Creating Sinks")
 
   // def runWithSink[E, A0, A, B](sink: Sink[E, A0, A, B]) =
   //  (runtime unsafeRun stream.run(sink)) pipe println
@@ -88,8 +88,9 @@ object AppSink extends scala.App {
   "----- Sink.pull1: fails with given type in case of empty stream, otherwise continues with provided sink:" pipe println
 
   val sink10: Sink[String, Int, Int, Int] =
-    Sink.pull1[String, Int, Int, Int](IO.fail("Empty stream, no value to pull")) { init =>
-      Sink.foldLeft[Int, Int](init)(_ + _)
+    Sink.pull1[String, Int, Int, Int](IO.fail("Empty stream, no value to pull")) {
+      init =>
+        Sink.foldLeft[Int, Int](init)(_ + _)
     }
   (runtime unsafeRun stream.run(sink10)) pipe println
 
@@ -105,7 +106,7 @@ object AppSink extends scala.App {
   // (runtime unsafeRun stream.run(sink11)) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Trasnsforming Sinks")
+  printTextInLine("Trasnsforming Sinks")
 
   "----- Sink#filter: filters the Sink" pipe println
 
@@ -115,7 +116,8 @@ object AppSink extends scala.App {
 
   "----- Sink#race: Running two sinks in parallel and returning the one that completed earlier:" pipe println
 
-  val sink13: Sink[Unit, Nothing, Int, Int] = Sink.foldLeft[Int, Int](0)(_ + _) race Sink
+  val sink13
+    : Sink[Unit, Nothing, Int, Int] = Sink.foldLeft[Int, Int](0)(_ + _) race Sink
     .identity[Int]
   (runtime unsafeRun stream.run(sink13)) pipe println
 
@@ -132,5 +134,5 @@ object AppSink extends scala.App {
     .dimap[Int, List[String]](_.toString + "id")(_.take(10))
   (runtime unsafeRun stream.run(sink15)) pipe println
 
-  prtLine()
+  printLine()
 }

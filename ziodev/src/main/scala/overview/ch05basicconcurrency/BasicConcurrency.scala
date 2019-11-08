@@ -17,12 +17,12 @@ import util.formatting._
 object BasicConcurrency extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Forking Effects: Fiber#fork")
+  printTextInLine("Forking Effects: Fiber#fork")
 
   def fib(n: Long): UIO[Long] =
     UIO {
@@ -36,68 +36,68 @@ object BasicConcurrency extends App {
     } yield fiber
 
   val fiber: Fiber[Nothing, Long] = runtime.unsafeRun(fib100Fiber)
-  val res1: IO[Nothing, Long]     = fiber.join
+  val res1: IO[Nothing, Long] = fiber.join
   runtime.unsafeRun(res1) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Joining Fibers: Fiber#join")
+  printTextInLine("Joining Fibers: Fiber#join")
 
   val zio2: ZIO[Any, Nothing, String] = for {
-    fiber   <- IO.succeed("Hi!").fork
+    fiber <- IO.succeed("Hi!").fork
     message <- fiber.join
   } yield message
   val res2: String = runtime.unsafeRun(zio2) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Awaiting Fibers: Fiber#await")
+  printTextInLine("Awaiting Fibers: Fiber#await")
 
   val zio3: ZIO[Any, Nothing, Exit[Nothing, String]] = for {
     fiber <- IO.succeed("Hi!").fork
-    exit  <- fiber.await
+    exit <- fiber.await
   } yield exit
   val res3 = runtime.unsafeRun(zio3) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Interrupting Fibers: Fiber#interrupt")
+  printTextInLine("Interrupting Fibers: Fiber#interrupt")
 
   val zio4: ZIO[Any, Nothing, Exit[Nothing, String]] = for {
     fiber <- IO.succeed("Hi!").forever.fork
-    exit  <- fiber.interrupt
+    exit <- fiber.interrupt
   } yield exit
   val res4: Exit[Nothing, String] = runtime.unsafeRun(zio4) // tap println
 
   val zio5: ZIO[Any, Nothing, Unit] = for {
     fiber <- IO.succeed("Hi!").forever.fork
-    _     <- fiber.interrupt.fork
+    _ <- fiber.interrupt.fork
   } yield ()
   val res5: Unit = runtime.unsafeRun(zio5) // tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Composing Fibers: zip, zipWith, orElse")
+  printTextInLine("Composing Fibers: zip, zipWith, orElse")
 
   val zio6: ZIO[Any, Nothing, (String, String)] = for {
     fiber1 <- IO.succeed("Hi!").fork
     fiber2 <- IO.succeed("Bye!").fork
-    fiber  = fiber1.zip(fiber2)
-    tuple  <- fiber.join
+    fiber = fiber1.zip(fiber2)
+    tuple <- fiber.join
   } yield tuple
   val res6: (String, String) = runtime.unsafeRun(zio6) tap println
 
   val zio7: ZIO[Any, String, String] = for {
     fiber1 <- IO.fail("Uh oh!").fork
     fiber2 <- IO.succeed("Hurray!").fork
-    fiber  = fiber1.orElse(fiber2)
-    tuple  <- fiber.join
+    fiber = fiber1.orElse(fiber2)
+    tuple <- fiber.join
   } yield tuple
   val res7: String = runtime.unsafeRun(zio7) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Parallelism")
+  printTextInLine("Parallelism")
   "sequential operations: ZIO#zip,    zipWith,    collectAll,    foreach,    reduceAll,    mergeAll" tap println
   "parallel operations  : ZIO#zipPar, zipWithPar, collectAllPar, foreachPar, reduceAllPar, mergeAllPar" tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Racing: Fiber#race")
+  printTextInLine("Racing: Fiber#race")
 
   val zio8: ZIO[Any, Nothing, String] = for {
     winner <- IO.succeed("Hello") race IO.succeed("Goodbye")
@@ -110,12 +110,13 @@ object BasicConcurrency extends App {
   val res9: Either[String, Int] = runtime.unsafeRun(zio9) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Timeout")
+  printTextInLine("Timeout")
 
   import zio.duration._
 
-  val zio10: ZIO[Any with Clock, Nothing, Option[String]] = IO.succeed("Hello").timeout(10.seconds)
-  val res10: Option[String]                               = runtime.unsafeRun(zio10) tap println
+  val zio10: ZIO[Any with Clock, Nothing, Option[String]] =
+    IO.succeed("Hello").timeout(10.seconds)
+  val res10: Option[String] = runtime.unsafeRun(zio10) tap println
 
-  prtLine()
+  printLine()
 }

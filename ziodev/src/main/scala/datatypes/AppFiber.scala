@@ -11,10 +11,10 @@ import scala.util.chaining._
 
 object AppFiber extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   // ------------------------------------------------------------
-  prtSubTitle("Fiber: Fiber#fork, Fiber#join, Fiber#interrupt")
+  printTextInLine("Fiber: Fiber#fork, Fiber#join, Fiber#interrupt")
 
   val runtime = new DefaultRuntime {}
 
@@ -25,7 +25,7 @@ object AppFiber extends scala.App {
   }
 
   case class Validation(data: List[Int]) {
-    def validate(): Boolean       = true
+    def validate(): Boolean = true
     override def toString: String = "AnalValidationysis(data ...)"
   }
 
@@ -39,12 +39,12 @@ object AppFiber extends scala.App {
 
   val analyzed: ZIO[Any, Nothing, Analysis] =
     for {
-      fiber1 <- analyzeData(data).fork  // IO[E, Analysis]
+      fiber1 <- analyzeData(data).fork // IO[E, Analysis]
       fiber2 <- validateData(data).fork // IO[E, Boolean]
       // Do other stuff
       valid <- fiber2.join
       _ <- if (!valid) fiber1.interrupt
-          else IO.unit
+      else IO.unit
       analyzed <- fiber1.join
     } yield analyzed
 
@@ -60,8 +60,8 @@ object AppFiber extends scala.App {
       for {
         fiber1 <- fib(n - 2).fork
         fiber2 <- fib(n - 1).fork
-        v2     <- fiber2.join
-        v1     <- fiber1.join
+        v2 <- fiber2.join
+        v1 <- fiber1.join
       } yield v1 + v2
     }
 
@@ -70,10 +70,10 @@ object AppFiber extends scala.App {
   }
 
   // ------------------------------------------------------------
-  prtSubTitle("Error Model")
+  printTextInLine("Error Model")
 
   // ------------------------------------------------------------
-  prtSubTitle("Parallelism: Fiber#zipPar")
+  printTextInLine("Parallelism: Fiber#zipPar")
 
   type Matrix = List[List[Int]]
 
@@ -85,9 +85,9 @@ object AppFiber extends scala.App {
 
   def bigCompute(m1: Matrix, m2: Matrix, v: Matrix): UIO[Matrix] =
     for {
-      t        <- computeInverse(m1).zipPar(computeInverse(m2))
+      t <- computeInverse(m1).zipPar(computeInverse(m2))
       (i1, i2) = t
-      r        <- applyMatrices(i1, i2, v)
+      r <- applyMatrices(i1, i2, v)
     } yield r
 
   val bigCompute123: UIO[Matrix] =
@@ -95,9 +95,9 @@ object AppFiber extends scala.App {
   (runtime unsafeRun bigCompute123) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Racing: Fiber#race, Fiber#raceWith")
+  printTextInLine("Racing: Fiber#race, Fiber#raceWith")
 
   (runtime unsafeRun (fib(20) race fib(10))) pipe println
 
-  prtLine()
+  printLine()
 }

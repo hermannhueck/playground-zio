@@ -16,9 +16,9 @@ package object zioworkshop {
 
   val managed =
     Managed.make {
-      IO.succeed(prtLine())
+      IO.succeed(printLine())
     } { _ =>
-      IO.succeed(prtLine())
+      IO.succeed(printLine())
     }
 
   def withLines[A](thunk: => ZIO[ZEnv, Nothing, A]): ZIO[ZEnv, Nothing, A] =
@@ -31,8 +31,7 @@ package object zioworkshop {
   import util.syntax.either.EitherOps
 
   def ioOperation[RESULT](ioOp: => RESULT): Either[IOException, RESULT] =
-    Try(ioOp)
-      .toEither
+    Try(ioOp).toEither
       .mapLeft {
         case ioe: IOException => ioe
         case t: Throwable     => throw t

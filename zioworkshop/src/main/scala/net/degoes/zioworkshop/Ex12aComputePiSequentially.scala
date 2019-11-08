@@ -43,16 +43,17 @@ object Ex12aComputePiSequentially extends App {
     */
   def computeNextPoint(pst: PiState): ZIO[ZEnv, Nothing, PiState] =
     for {
-      tuple  <- randomPoint
+      tuple <- randomPoint
       (x, y) = tuple
-      _      <- pst.total.update(_ + 1)
+      _ <- pst.total.update(_ + 1)
       _ <- if (insideCircle(x, y))
-            pst.inside.update(_ + 1)
-          else
-            IO.unit
+        pst.inside.update(_ + 1)
+      else
+        IO.unit
     } yield pst
 
-  def repeat(n: Long)(zioPiState: ZIO[ZEnv, Nothing, PiState]): ZIO[ZEnv, Nothing, PiState] =
+  def repeat(n: Long)(
+      zioPiState: ZIO[ZEnv, Nothing, PiState]): ZIO[ZEnv, Nothing, PiState] =
     if (n <= 0)
       zioPiState
     else
@@ -64,21 +65,21 @@ object Ex12aComputePiSequentially extends App {
 
     val initialState: ZIO[ZEnv, Nothing, PiState] = for {
       inside <- Ref.make(0L)
-      total  <- Ref.make(0L)
+      total <- Ref.make(0L)
     } yield PiState(inside, total)
 
     val zioEstimate = for {
       finalState <- repeat(1000000)(initialState)
-      inside     <- finalState.inside.get
-      total      <- finalState.total.get
-      _          <- putStrLn(s"\ninside = $inside, total = $total")
+      inside <- finalState.inside.get
+      total <- finalState.total.get
+      _ <- putStrLn(s"\ninside = $inside, total = $total")
     } yield estimatePi(inside, total)
 
     (for {
-      _  <- putStrLn(title(objectName(this)))
+      _ <- putStrLn(header(objectName(this)))
       pi <- zioEstimate
-      _  <- putStrLn(s"PI (total/inside) = $pi")
-      _  <- putStrLn(line())
+      _ <- putStrLn(s"PI (total/inside) = $pi")
+      _ <- putStrLn(line())
     } yield ())
       .fold(_ => 1, _ => 0)
   }

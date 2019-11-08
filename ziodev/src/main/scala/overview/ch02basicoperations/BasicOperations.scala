@@ -17,24 +17,24 @@ import util.formatting._
 object BasicOperations extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("Mapping: #map, #mapError")
+  printTextInLine("Mapping: #map, #mapError")
 
   val succeded: UIO[Int] = IO.succeed(21).map(_ * 2)
-  val res1               = runtime.unsafeRun(succeded) tap println
+  val res1 = runtime.unsafeRun(succeded) tap println
 
   val failed: IO[Exception, Unit] =
     IO.fail("No no!").mapError(msg => new Exception(msg))
   // val res2 = runtime.unsafeRun(failed) tap println // throws java.lang.Exception: No no!
 
   // ------------------------------------------------------------
-  prtSubTitle("Chaining: #flatMap")
+  printTextInLine("Chaining: #flatMap")
 
-  val getStrLn: Task[String]            = ZIO.effect(StdIn.readLine())
+  val getStrLn: Task[String] = ZIO.effect(StdIn.readLine())
   def putStrLn(line: String): UIO[Unit] = ZIO.effectTotal(println(line))
 
   val sequenced =
@@ -43,18 +43,18 @@ object BasicOperations extends App {
   val res3 = runtime.unsafeRun(sequenced) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("For Comprehensions")
+  printTextInLine("For Comprehensions")
 
   val program =
     for {
-      _    <- putStrLn("Hello! What is your name?")
+      _ <- putStrLn("Hello! What is your name?")
       name <- getStrLn
-      _    <- putStrLn(s"Hello, ${name}, welcome to ZIO!")
+      _ <- putStrLn(s"Hello, ${name}, welcome to ZIO!")
     } yield ()
   val res4 = runtime.unsafeRun(program) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("Zipping: #zip, #zipLeft, #zipRight, <*, *>")
+  printTextInLine("Zipping: #zip, #zipLeft, #zipRight, <*, *>")
 
   val zipped: UIO[(String, Int)] =
     ZIO.succeed("4").zip(ZIO.succeed(2))
@@ -68,5 +68,5 @@ object BasicOperations extends App {
     putStrLn("What is your name?") *> getStrLn
   val res7 = runtime.unsafeRun(zipRight2) tap println
 
-  prtLine()
+  printLine()
 }

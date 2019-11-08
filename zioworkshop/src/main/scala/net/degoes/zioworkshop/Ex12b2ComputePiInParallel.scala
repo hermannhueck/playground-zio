@@ -18,7 +18,7 @@ object Ex12b2ComputePiInParallel extends App {
 
   val zioPiState: ZIO[ZEnv, Nothing, PiState] = for {
     inside <- Ref.make(0L)
-    total  <- Ref.make(0L)
+    total <- Ref.make(0L)
   } yield PiState(inside, total)
 
   /**
@@ -49,15 +49,17 @@ object Ex12b2ComputePiInParallel extends App {
   def computeNextPoint: ZIO[ZEnv, Nothing, Unit] =
     for {
       piState <- zioPiState
-      tuple   <- randomPoint
-      (x, y)  = tuple
-      _       <- piState.total.update(_ + 1)
-      _       <- incrementIfInsideCircle(piState.inside, x, y)
-      total2  <- piState.total.get
-      _       <- putStrLn(s"current total = $total2")
+      tuple <- randomPoint
+      (x, y) = tuple
+      _ <- piState.total.update(_ + 1)
+      _ <- incrementIfInsideCircle(piState.inside, x, y)
+      total2 <- piState.total.get
+      _ <- putStrLn(s"current total = $total2")
     } yield ()
 
-  def incrementIfInsideCircle(ref: Ref[Long], x: Double, y: Double): ZIO[Any, Nothing, AnyVal] =
+  def incrementIfInsideCircle(ref: Ref[Long],
+                              x: Double,
+                              y: Double): ZIO[Any, Nothing, AnyVal] =
     if (insideCircle(x, y))
       ref.update(_ + 1)
     else
@@ -68,22 +70,21 @@ object Ex12b2ComputePiInParallel extends App {
       UIO.unit
     else
       ZIO sequence { // List[ZIO[..., Fiber]] --> ZIO[..., List[Fiber]]
-        (0L until n)
-          .toList
+        (0L until n).toList
           .map(_ => computeNextPoint.fork)
       } flatMap Fiber.awaitAll
 
   def run(args: List[String]): ZIO[ZEnv, Nothing, Int] =
     (for {
-      _       <- putStrLn(title(objectName(this)))
-      _       <- comnputeWithFibers(10)
+      _ <- putStrLn(header(objectName(this)))
+      _ <- comnputeWithFibers(10)
       piState <- zioPiState
-      inside  <- piState.inside.get
-      total   <- piState.total.get
-      _       <- putStrLn(s"\ninside = $inside, total = $total")
-      pi      = estimatePi(inside, total)
-      _       <- putStrLn(s"PI (total/inside) = $pi")
-      _       <- putStrLn(line())
+      inside <- piState.inside.get
+      total <- piState.total.get
+      _ <- putStrLn(s"\ninside = $inside, total = $total")
+      pi = estimatePi(inside, total)
+      _ <- putStrLn(s"PI (total/inside) = $pi")
+      _ <- putStrLn(line())
     } yield ())
       .fold(_ => 1, _ => 0)
 }

@@ -11,24 +11,24 @@ import scala.util.chaining._
 
 object AppRef extends scala.App {
 
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   // ------------------------------------------------------------
-  prtSubTitle("Ref: Ref.make, Ref#get, Ref#set")
+  printTextInLine("Ref: Ref.make, Ref#get, Ref#set")
 
   val runtime = new DefaultRuntime {}
 
   val zio1 = for {
     ref <- Ref.make(100)
-    v1  <- ref.get
-    _   <- ref.set(v1 - 50)
-    v3  <- ref.get
+    v1 <- ref.get
+    _ <- ref.set(v1 - 50)
+    v3 <- ref.get
   } yield v3
 
   runtime.unsafeRun(zio1) pipe println
 
   // ------------------------------------------------------------
-  prtSubTitle("Updating a Ref: Ref#update")
+  printTextInLine("Updating a Ref: Ref#update")
 
   def repeat[E, A](n: Int)(io: IO[E, A]): IO[E, Unit] =
     Ref.make(0).flatMap { iRef =>
@@ -45,7 +45,7 @@ object AppRef extends scala.App {
   runtime unsafeRun io
 
   // ------------------------------------------------------------
-  prtSubTitle("State Transformers: Ref#modify")
+  printTextInLine("State Transformers: Ref#modify")
 
   "--- classic state mutation without ZIO ---" pipe println
   var idCounter = 0
@@ -75,5 +75,5 @@ object AppRef extends scala.App {
 
   (runtime unsafeRun uioFinalId) pipe println
 
-  prtLine()
+  printLine()
 }

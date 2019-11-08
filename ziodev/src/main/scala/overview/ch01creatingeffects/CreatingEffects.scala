@@ -21,27 +21,27 @@ import util.formatting._
 object CreatingEffects extends App {
 
   // ------------------------------------------------------------
-  prtTitleObjectName(this)
+  printHeaderWithProgramName(this)
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  prtSubTitle("From Success Values: .succeed, .effectTotal")
+  printTextInLine("From Success Values: .succeed, .effectTotal")
 
   val s1: UIO[Int] = ZIO.succeed(42)
-  val res1         = runtime.unsafeRun(s1) tap println
+  val res1 = runtime.unsafeRun(s1) tap println
 
   val s2: Task[Int] = Task.succeed(42)
-  val res2          = runtime.unsafeRun(s2) tap println
+  val res2 = runtime.unsafeRun(s2) tap println
 
   //lazy val bigList = (0 to 1000000).toList
-  lazy val bigList   = (0 to 100).toList
+  lazy val bigList = (0 to 100).toList
   lazy val bigString = bigList.map(_.toString).mkString(", ")
-  val s3             = ZIO.effectTotal(bigString) // ZIO.succeedLazy(bigString) is deprecated
-  val res3           = runtime.unsafeRun(s3) tap println
+  val s3 = ZIO.effectTotal(bigString) // ZIO.succeedLazy(bigString) is deprecated
+  val res3 = runtime.unsafeRun(s3) tap println
 
   // ------------------------------------------------------------
-  prtSubTitle("From Failure Values: .fail")
+  printTextInLine("From Failure Values: .fail")
 
   val f1 = ZIO.fail("Uh oh!")
   // runtime.unsafeRun(f1)
@@ -50,11 +50,13 @@ object CreatingEffects extends App {
   // runtime.unsafeRun(f2)
 
   // ------------------------------------------------------------
-  prtSubTitle("From Scala Values: .fromOption, .fromEither, .fromFunction, .fromFuture")
+  printTextInLine(
+    "From Scala Values: .fromOption, .fromEither, .fromFunction, .fromFuture")
 
   // Option
-  val zoption: ZIO[Any, Unit, Int]    = ZIO.fromOption(Some(2))
-  val zoption2: ZIO[Any, String, Int] = zoption.mapError(_ => "It wasn't there!")
+  val zoption: ZIO[Any, Unit, Int] = ZIO.fromOption(Some(2))
+  val zoption2: ZIO[Any, String, Int] =
+    zoption.mapError(_ => "It wasn't there!")
 
   // Either
   val zeither: IO[Nothing, String] = ZIO.fromEither(Right("Success!"))
@@ -78,7 +80,7 @@ object CreatingEffects extends App {
     }
 
   // ------------------------------------------------------------
-  prtSubTitle("From Synchronous Side-Effects: .effect, .effectTotal")
+  printTextInLine("From Synchronous Side-Effects: .effect, .effectTotal")
 
   val getStrLn: Task[Unit] = ZIO.effect(StdIn.readLine())
 
@@ -88,7 +90,7 @@ object CreatingEffects extends App {
     ZIO.effect(StdIn.readLine()).refineToOrDie[IOException]
 
   // ------------------------------------------------------------
-  prtSubTitle("From Asynchronous Side-Effects: .effectAsync")
+  printTextInLine("From Asynchronous Side-Effects: .effectAsync")
 
   case class User(name: String)
   case class AuthError(msg: String)
@@ -106,7 +108,7 @@ object CreatingEffects extends App {
     }
 
   // ------------------------------------------------------------
-  prtSubTitle(
+  printTextInLine(
     "From Blocking Synchronous Side-Effects: .effectBlocking, .effectBlockingCancelable, .blocking"
   )
 
@@ -125,5 +127,5 @@ object CreatingEffects extends App {
   def safeDownload(url: String): ZIO[Blocking, Throwable, String] =
     blocking(download(url))
 
-  prtLine()
+  printLine()
 }
