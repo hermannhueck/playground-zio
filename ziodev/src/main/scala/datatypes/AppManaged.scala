@@ -6,9 +6,7 @@ import zio._
 import util.formatting._
 import scala.util.chaining._
 
-object AppManaged extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppManaged extends util.App {
 
   // ------------------------------------------------------------
   printTextInLine("Managed: Managed.make")
@@ -40,8 +38,7 @@ object AppManaged extends scala.App {
 
   val managedFromEffect: Managed[String, Int] = Managed.fromEffect(acquire)
 
-  runtime unsafeRun managedFromEffect.use(_ =>
-    IO.effect(println("Using the Int resource ...")))
+  runtime unsafeRun managedFromEffect.use(_ => IO.effect(println("Using the Int resource ...")))
 
   "--- from pure value ---" pipe println
 
@@ -57,8 +54,7 @@ object AppManaged extends scala.App {
   import zio.console._
 
   val zManagedResource: ZManaged[Console, Nothing, Unit] =
-    ZManaged.make(console.putStrLn("acquiring ..."))(_ =>
-      console.putStrLn("releasing ..."))
+    ZManaged.make(console.putStrLn("acquiring ..."))(_ => console.putStrLn("releasing ..."))
 
   val zUsedResource: ZIO[Console, Nothing, Unit] = zManagedResource.use { _ =>
     console.putStrLn("running ...")
@@ -78,7 +74,7 @@ object AppManaged extends scala.App {
     Managed.make(openFile("README.md"))(closeFile)
 
   val combined: Managed[IOException, (Queue[Int], BufferedReader)] = for {
-    queue <- managedQueue
+    queue  <- managedQueue
     reader <- managedFile
   } yield (queue, reader)
 
@@ -86,13 +82,9 @@ object AppManaged extends scala.App {
     case (queue, reader) => doSomething(queue, reader)
   }
 
-  def doSomething(queue: Queue[Int],
-                  reader: BufferedReader): IO[IOException, Unit] =
-    IO.effect(
-        println(s"... using the Queue: $queue and BufferedReader: $reader ..."))
+  def doSomething(queue: Queue[Int], reader: BufferedReader): IO[IOException, Unit] =
+    IO.effect(println(s"... using the Queue: $queue and BufferedReader: $reader ..."))
       .refineToOrDie[IOException]
 
   runtime unsafeRun usedCombinedResource
-
-  printLine()
 }

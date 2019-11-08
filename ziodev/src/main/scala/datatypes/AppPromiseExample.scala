@@ -13,9 +13,7 @@ import zio.clock._
 import zio.console._
 import zio.duration._
 
-object AppPromiseExample extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppPromiseExample extends util.App {
 
   // ------------------------------------------------------------
   printTextInLine("Promise Example Usage")
@@ -29,12 +27,10 @@ object AppPromiseExample extends scala.App {
         sleep(1.second))
         .flatMap(promise.succeed)
       getAndPrint = promise.await.flatMap(putStrLn)
-      fiberA <- sendHelloWorld.fork
-      fiberB <- getAndPrint.fork
-      _ <- (fiberA zip fiberB).join
+      fiberA      <- sendHelloWorld.fork
+      fiberB      <- getAndPrint.fork
+      _           <- (fiberA zip fiberB).join
     } yield ()
 
   runtime unsafeRun program
-
-  printLine()
 }

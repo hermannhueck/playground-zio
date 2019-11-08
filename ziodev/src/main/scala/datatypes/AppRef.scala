@@ -9,9 +9,7 @@ import zio._
 import util.formatting._
 import scala.util.chaining._
 
-object AppRef extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppRef extends util.App {
 
   // ------------------------------------------------------------
   printTextInLine("Ref: Ref.make, Ref#get, Ref#set")
@@ -20,9 +18,9 @@ object AppRef extends scala.App {
 
   val zio1 = for {
     ref <- Ref.make(100)
-    v1 <- ref.get
-    _ <- ref.set(v1 - 50)
-    v3 <- ref.get
+    v1  <- ref.get
+    _   <- ref.set(v1 - 50)
+    v3  <- ref.get
   } yield v3
 
   runtime.unsafeRun(zio1) pipe println
@@ -74,6 +72,4 @@ object AppRef extends scala.App {
   }
 
   (runtime unsafeRun uioFinalId) pipe println
-
-  printLine()
 }

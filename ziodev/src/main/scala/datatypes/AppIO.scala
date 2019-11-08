@@ -13,9 +13,7 @@ import zio._
 import util.formatting._
 import scala.util.chaining._
 
-object AppIO extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppIO extends util.App {
 
   // ------------------------------------------------------------
   printTextInLine("IO")
@@ -35,8 +33,7 @@ object AppIO extends scala.App {
   printTextInLine("Unproductive IO")
 
   // ------------------------------------------------------------
-  printTextInLine(
-    "Impure Code: IO.effect, IO.effectTotal, IO#refineOrDie, IO.effectAsync")
+  printTextInLine("Impure Code: IO.effect, IO.effectTotal, IO#refineOrDie, IO.effectAsync")
 
   val effectTotalTask: Task[Long] = IO.effectTotal(System.nanoTime())
   (runtime unsafeRun effectTotalTask) pipe println
@@ -48,8 +45,7 @@ object AppIO extends scala.App {
       .refineToOrDie[IOException]
 
   def readFile(name: String): ZIO[Any, IOException, String] =
-    IO.effect(
-        FileUtils.readFileToString(new File(name), StandardCharsets.UTF_8))
+    IO.effect(FileUtils.readFileToString(new File(name), StandardCharsets.UTF_8))
       .refineToOrDie[IOException]
 
   (runtime unsafeRun readFile("README.md")) pipe println
@@ -80,7 +76,7 @@ object AppIO extends scala.App {
   (runtime unsafeRun chainedActionsValue) pipe println
 
   val chainedActionsValueWithForComprehension: UIO[List[Int]] = for {
-    list <- IO.succeed(List(1, 2, 3))
+    list  <- IO.succeed(List(1, 2, 3))
     added <- IO.succeed(list.map(_ + 1))
   } yield added
   (runtime unsafeRun chainedActionsValueWithForComprehension) pipe println
@@ -92,11 +88,10 @@ object AppIO extends scala.App {
 
   "\n--- IO#ensuring" pipe println
 
-  var i: Int = 0
-  val action: Task[String] = Task.effectTotal(i += 1) *> Task.fail(
-    new Throwable("Boom!"))
+  var i: Int                   = 0
+  val action: Task[String]     = Task.effectTotal(i += 1) *> Task.fail(new Throwable("Boom!"))
   val cleanupAction: UIO[Unit] = UIO.effectTotal(i -= 1)
-  val composite = action.ensuring(cleanupAction)
+  val composite                = action.ensuring(cleanupAction)
 
   try {
     runtime unsafeRun composite
@@ -106,6 +101,4 @@ object AppIO extends scala.App {
   } finally {
     s"i = $i" pipe println
   }
-
-  printLine()
 }

@@ -14,15 +14,12 @@ import zio.duration.Duration
 import util.formatting._
 import scala.util.chaining._
 
-object AppSemaphore extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppSemaphore extends util.App {
 
   val runtime = new DefaultRuntime {}
 
   // ------------------------------------------------------------
-  printTextInLine(
-    "Semaphore: Semaphore.make, Semaphore#acquire, Semaphore#release")
+  printTextInLine("Semaphore: Semaphore.make, Semaphore#acquire, Semaphore#release")
 
   val task = for {
     _ <- putStrLn("start")
@@ -43,7 +40,7 @@ object AppSemaphore extends scala.App {
   val program = for {
     sem <- Semaphore.make(permits = 1)
     seq <- ZIO.effectTotal(semTaskSeq(sem))
-    _ <- ZIO.collectAllPar(seq)
+    _   <- ZIO.collectAllPar(seq)
   } yield ()
 
   runtime unsafeRun program
@@ -63,6 +60,4 @@ object AppSemaphore extends scala.App {
     for {
       _ <- sem.withPermit(task)
     } yield ()
-
-  printLine()
 }

@@ -14,9 +14,7 @@ import cats.implicits._
 import util.formatting._
 import scala.util.chaining._
 
-object AppStream extends scala.App {
-
-  printHeaderWithProgramName(this)
+object AppStream extends util.App {
 
   val runtime = new DefaultRuntime {}
 
@@ -33,7 +31,7 @@ object AppStream extends scala.App {
   // ------------------------------------------------------------
   printTextInLine("Transforming a Stream: #map")
 
-  val intStream: Stream[Nothing, Int] = Stream.fromIterable(0 to 100)
+  val intStream: Stream[Nothing, Int]       = Stream.fromIterable(0 to 100)
   val stringStream: Stream[Nothing, String] = intStream.map(_.toString)
 
   // ------------------------------------------------------------
@@ -61,7 +59,7 @@ object AppStream extends scala.App {
 
   "--- Stream#merge:" pipe println
 
-  val merged: Stream[Nothing, Int] = Stream(1, 2, 3).merge(Stream(11, 12, 13))
+  val merged: Stream[Nothing, Int]            = Stream(1, 2, 3).merge(Stream(11, 12, 13))
   val resMerged: ZIO[Any, Nothing, List[Int]] = merged.run(Sink.collectAll[Int])
   (runtime unsafeRun resMerged) pipe println
 
@@ -69,6 +67,7 @@ object AppStream extends scala.App {
 
   val zipped: Stream[Nothing, (Int, Int)] =
     Stream(1, 2, 3).zip(Stream(11, 12, 13))
+
   val resZipped: ZIO[Any, Nothing, List[(Int, Int)]] =
     zipped.run(Sink.collectAll[(Int, Int)])
 
@@ -81,8 +80,7 @@ object AppStream extends scala.App {
 
   val reducedResult: UIO[Int] = zipped.run(Sink.foldLeft(0)(tupleStreamReduce))
 
-  (runtime unsafeRun reducedResult) pipe (reduced =>
-    println(s"tuples reduced: $reduced"))
+  (runtime unsafeRun reducedResult) pipe (reduced => println(s"tuples reduced: $reduced"))
 
   "--- Stream#zipWith:" pipe println
 
@@ -91,6 +89,7 @@ object AppStream extends scala.App {
       .zipWith(Stream(11, 12, 13)) {
         case (opt1, opt2) => opt1 -> opt2 mapN (_ + _)
       }
+
   val resZippedWith: ZIO[Any, Nothing, List[Int]] =
     zippedWith.run(Sink.collectAll[Int])
   (runtime unsafeRun resZippedWith) pipe println
@@ -98,7 +97,8 @@ object AppStream extends scala.App {
   "--- Stream#zipWithIndex:" pipe println
 
   val zippedWithIndex: Stream[Nothing, String] =
-    Stream(10, 11, 12).zipWithIndex
+    Stream(10, 11, 12)
+      .zipWithIndex
       .map(_.swap)
       .map { case (index, value) => s"index = $index, value = $value" }
 
@@ -106,6 +106,4 @@ object AppStream extends scala.App {
     zippedWithIndex.run(Sink.collectAll[String])
 
   runtime unsafeRun resZippedWithIndex foreach println
-
-  printLine()
 }
