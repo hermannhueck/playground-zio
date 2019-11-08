@@ -20,15 +20,20 @@ object AppFiber extends scala.App {
 
   "--- computing Analysis ---" pipe println
 
-  trait Analysis {
-    override def toString: String = "Analysis"
+  case class Analysis(data: List[Int]) {
+    override def toString: String = "Analysis(data ...)"
+  }
+
+  case class Validation(data: List[Int]) {
+    def validate(): Boolean       = true
+    override def toString: String = "AnalValidationysis(data ...)"
   }
 
   def analyzeData(data: List[Int]): UIO[Analysis] =
-    UIO.succeed(new Analysis {})
+    UIO.succeed(Analysis(data))
 
   def validateData(data: List[Int]): UIO[Boolean] =
-    IO.succeed(true)
+    IO.succeed(Validation(data).validate())
 
   val data = List(1, 2, 3)
 

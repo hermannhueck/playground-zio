@@ -48,15 +48,15 @@ object AppRefSema extends scala.App {
 
   val party = for {
     dancefloor <- Sema(10)
-    dancers <- ZIO.foreachPar(1 to 100) { dancer =>
-                dancefloor.P *> nextDouble
-                  .map(double => Duration.fromNanos((double * 1000000).round))
-                  .flatMap { duration =>
-                    putStrLn(s"Dancer ${dancer}: checking my boots") *>
-                      sleep(duration) *>
-                      putStrLn(s"Dancer ${dancer}: dancing like it's 99")
-                  } *> dancefloor.V
-              }
+    _ <- ZIO.foreachPar(1 to 100) { dancer =>
+          dancefloor.P *> nextDouble
+            .map(double => Duration.fromNanos((double * 1000000).round))
+            .flatMap { duration =>
+              putStrLn(s"Dancer ${dancer}: checking my boots") *>
+                sleep(duration) *>
+                putStrLn(s"Dancer ${dancer}: dancing like it's 99")
+            } *> dancefloor.V
+        }
   } yield ()
 
   new DefaultRuntime {} unsafeRun party

@@ -21,7 +21,7 @@ object AppRef extends scala.App {
   val zio1 = for {
     ref <- Ref.make(100)
     v1  <- ref.get
-    v2  <- ref.set(v1 - 50)
+    _   <- ref.set(v1 - 50)
     v3  <- ref.get
   } yield v3
 
@@ -70,7 +70,7 @@ object AppRef extends scala.App {
       v1 <- freshVar
       v2 <- freshVar
       v3 <- freshVar
-    } yield v3
+    } yield (v1, v2, v3)
   }
 
   (runtime unsafeRun uioFinalId) pipe println

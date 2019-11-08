@@ -98,7 +98,7 @@ object AppIO extends scala.App {
   try {
     runtime unsafeRun composite
   } catch {
-    case t: Throwable =>
+    case _: Throwable =>
       "\ncaught Exception" pipe println
   } finally {
     s"i = $i" pipe println

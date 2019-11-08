@@ -16,7 +16,7 @@ object AppManaged extends scala.App {
   val runtime = new DefaultRuntime {}
 
   def doSomething(queue: Queue[Int]): Task[Unit] =
-    IO.effect(println("... using the Queue ..."))
+    IO.effect(println(s"... using the Queue $queue"))
 
   val managedResource = Managed.make(Queue.unbounded[Int])(_.shutdown)
 
@@ -85,7 +85,7 @@ object AppManaged extends scala.App {
   }
 
   def doSomething(queue: Queue[Int], reader: BufferedReader): IO[IOException, Unit] =
-    IO.effect(println("... using the Queue and BufferedReader ..."))
+    IO.effect(println(s"... using the Queue: $queue and BufferedReader: $reader ..."))
       .refineToOrDie[IOException]
 
   runtime unsafeRun usedCombinedResource

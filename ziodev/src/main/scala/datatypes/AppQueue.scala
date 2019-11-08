@@ -126,10 +126,10 @@ object AppQueue extends scala.App {
 
   val awaitShutdown: UIO[Unit] = for {
     queue <- Queue.bounded[Int](3)
-    p     <- Promise.make[Nothing, Boolean]
-    f     <- queue.awaitShutdown.fork
-    _     <- queue.shutdown
-    _     <- f.join
+    // p     <- Promise.make[Nothing, Boolean]
+    f <- queue.awaitShutdown.fork
+    _ <- queue.shutdown
+    _ <- f.join
   } yield ()
 
   (runtime unsafeRun awaitShutdown) pipe println

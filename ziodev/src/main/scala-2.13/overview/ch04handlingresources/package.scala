@@ -8,8 +8,8 @@ package object ch04handlingresources {
       .groupBy(_._1)
       .view
       .mapValues(_.length)
-      .filter { case k -> v => v > 1 } // omit words with just 1 occurrence
-      .filterNot { case k -> v => k.matches("^\\d.*") } // omit words starting with a digit
+      .filter { case _ -> v => v > 1 } // omit words with just 1 occurrence
+      .filterNot { case k -> _ => k.matches("^\\d.*") } // omit words starting with a digit
       .toList
       .sortWith { // sort 1st by occurence desc and then alphabetically
         case (w1 -> c1, w2 -> c2) =>
